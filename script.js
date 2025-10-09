@@ -1,8 +1,8 @@
 const API_KEY = "9d2402c9907e4accdd47a8578b8bb50c";
 const base_url = "https://api.openweathermap.org/data/2.5";
 
-const defaultCity = "London";
-const countryCode = "GB";
+const defaultCity = "Nairobi";
+const countryCode = "KE";
 const units = "metric";
 
 const cityInput = document.getElementById("city-input");
