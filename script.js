@@ -5,8 +5,6 @@ const defaultCity = "London";
 const countryCode = "GB";
 const units = "metric";
 
-const url = `${base_url}/forecast?q=${city},${countryCode}&units=${units}&appid=${API_KEY}`;
-
 const cityInput = document.getElementById("city-input");
 const searchBtn = document.getElementById("search-btn");
 const currentWeatherDiv = document.getElementById("current-weather");
@@ -14,86 +12,69 @@ const forecastContainer = document.getElementById("forecast-container");
 const errorMessage = document.getElementById("error-message");
 const loader = document.getElementById("loader");
 
- const weatherIcons = { 
-            '01d': 'fas fa-sun',         // clear sky (day) 
-            '01n': 'fas fa-moon',        // clear sky (night) 
-            '02d': 'fas fa-cloud-sun',   // few clouds (day) 
-            '02n': 'fas fa-cloud-moon',  // few clouds (night) 
-            '03d': 'fas fa-cloud',       // scattered clouds 
-            '03n': 'fas fa-cloud', 
-            '04d': 'fas fa-cloud',       // broken clouds 
-            '04n': 'fas fa-cloud', 
-            '09d': 'fas fa-cloud-rain',  // shower rain 
-            '09n': 'fas fa-cloud-rain', 
-            '10d': 'fas fa-cloud-sun-rain', // rain (day) 
-            '10n': 'fas fa-cloud-moon-rain',// rain (night) 
-            '11d': 'fas fa-bolt',        // thunderstorm 
-            '11n': 'fas fa-bolt', 
-            '13d': 'fas fa-snowflake',   // snow 
-            '13n': 'fas fa-snowflake', 
-            '50d': 'fas fa-smog',        // mist 
-            '50n': 'fas fa-smog' 
-        };
+const weatherIcons = { 
+    // Icon mapping
+};
 
-window.addEventListener('load',()=>{
-getWeatherData(defaultCity);
+window.addEventListener('load', () => {
+    getWeatherData(defaultCity);
 });
 
-searchBtn.addEventListener('click'()=>{
-    const city=cityInput.value.trim();
-    if (city){
+searchBtn.addEventListener('click', () => {
+    const city = cityInput.value.trim();
+    if (city) {
         getWeatherData(city);
     }
 });
 
-cityInput.addEventListener('keypress'(e)=>{
-    if(e.keypress==="Enter"){
-        const city= cityInput.value.trim();
-          if (city) { 
-          getWeatherData(city); 
-                } 
+cityInput.addEventListener('keypress', (e) => {
+    if (e.key === "Enter") {
+        const city = cityInput.value.trim();
+        if (city) {
+            getWeatherData(city);
+        }
     }
 });
-      // Fetch weather data from API 
-        async function getWeatherData(city) { 
-            // Show loader and hide error 
-            loader.style.display = 'block'; 
-            errorMessage.style.display = 'none'; 
-            currentWeatherDiv.innerHTML = ''; 
-            forecastContainer.innerHTML = ''; 
-             
-            try { 
-                // Fetch current weather 
-                const currentRes = await 
-fetch(`${BASE_URL}/weather?q=${city}&appid=${API_KEY}&units=metric`); 
-                const currentData = await currentRes.json(); 
-                 
-                // Handle API errors 
-                if (currentData.cod !== 200) { 
-                    throw new Error(currentData.message); 
-                } 
-                 
-                // Fetch forecast 
-                const forecastRes = await 
-fetch(`${BASE_URL}/forecast?q=${city}&appid=${API_KEY}&units=metric`); 
-                const forecastData = await forecastRes.json(); 
-                 
-                // Display the data 
-                displayCurrentWeather(currentData); 
-                displayForecast(forecastData); 
-            } catch (error) { 
-                // Show error message 
-                errorMessage.style.display = 'block'; 
-                errorMessage.textContent = `Error: ${error.message}`; 
-                console.error('Error fetching weather data:', error); 
-            } finally { 
-                // Hide loader 
-                loader.style.display = 'none'; 
-            } 
+
+// Fetch weather data from API 
+async function getWeatherData(city) { 
+    // Show loader and hide error 
+    loader.style.display = 'block'; 
+    errorMessage.style.display = 'none'; 
+    currentWeatherDiv.innerHTML = ''; 
+    forecastContainer.innerHTML = ''; 
+
+    try { 
+        // Fetch current weather 
+        const currentRes = await fetch(`${base_url}/weather?q=${city},${countryCode}&appid=${API_KEY}&units=${units}`); 
+        const currentData = await currentRes.json(); 
+
+        // Handle API errors 
+        if (currentData.cod !== 200) { 
+            throw new Error(currentData.message); 
         } 
-         
-        // Display current weather 
-        function displayCurrentWeather(data) { 
+
+        // Fetch forecast 
+        const forecastRes = await fetch(`${base_url}/forecast?q=${city},${countryCode}&appid=${API_KEY}&units=${units}`); 
+        const forecastData = await forecastRes.json(); 
+
+        // Display the data 
+        displayCurrentWeather(currentData); 
+        displayForecast(forecastData); 
+    } catch (error) { 
+        // Show error message 
+        errorMessage.style.display = 'block'; 
+        errorMessage.textContent = `Error: ${error.message}`; 
+        console.error('Error fetching weather data:', error); 
+    } finally { 
+        // Hide loader 
+        loader.style.display = 'none'; 
+    } 
+}
+
+// Remaining functions: displayCurrentWeather, displayForecast, formatDate, formatShortDate
+
+ function displayCurrentWeather(data) { 
             const { name, sys, main, weather, wind, dt } = data; 
             const date = new Date(dt * 1000); 
              
@@ -122,9 +103,8 @@ ${Math.round(main.feels_like)}°C</span>
                     </div> 
                 </div> 
             `; 
-        } 
-         
-        // Display 5-day forecast 
+        }
+          // Display 5-day forecast 
         function displayForecast(data) { 
             // Group forecast by day 
             const dailyForecast = {}; 
@@ -177,9 +157,8 @@ description">${forecast.weather.description}</div>
                 `; 
                 forecastContainer.appendChild(dayElement); 
             }); 
-        } 
-         
-        // Helper functions 
+        }
+          // Helper functions 
         function formatDate(date) { 
 return date.toLocaleDateString('en-US', {  
 weekday: 'long',  
